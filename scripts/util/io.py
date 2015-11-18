@@ -42,8 +42,42 @@ def excel_table_byindex(file,colnameindex=0,by_index=0):
         data_dict['data_num']=data_num
     return regu_table(data_dict)
 
+def regu_by_name(data_dict,name,regu_li):
+    if name!=u'楼层':
+        for index,data in enumerate(data_dict[name]):
+            data_int=0
+            try:
+                data_int=int(float(data))
+            except:
+                data_dict[name][index]=5
+                continue
+            if data_int<=regu_li[0]:
+                data_dict[name][index]=0
+            elif data_int<=regu_li[1]:
+                data_dict[name][index]=1
+            elif data_int<=regu_li[2]:
+                data_dict[name][index]=2
+            elif data_int<=regu_li[3]:
+                data_dict[name][index]=3
+            else:
+                data_dict[name][index]=4
+    else:
+        for index,data in enumerate(data_dict[name]):
+            if data==regu_li[0]:
+                data_dict[name][index]=0
+            elif data==regu_li[1]:
+                data_dict[name][index]=1
+            elif data==regu_li[2]:
+                data_dict[name][index]=2
+            elif data==regu_li[3]:
+                data_dict[name][index]=3
+            else:
+                data_dict[name][index]=4
+    return data_dict
+
 def regu_table(data_dict):
-    keys=[u'均价',u'装修',u'朝向',u'板块',u'挂牌价',u'面积',u'总层数',u'居室数',u'区域',u'楼层',u'小区',u'编号',u'建筑年代',u'楼型']
+    # keys=[u'均价',u'装修',u'朝向',u'板块',u'挂牌价',u'面积',u'总层数',u'居室数',u'区域',u'楼层',u'小区',u'建筑年代',u'楼型']
+    keys=[u'面积',u'总层数',u'居室数',u'楼层',u'建筑年代']
     # keys=data_dict.keys()# might be part of the keys
     # select cols and regu table
 
@@ -51,8 +85,21 @@ def regu_table(data_dict):
         with open(data_dir,'wb') as f:
             pickle.dump(data_dict,f)
 
+    data_dict=regu_by_name(data_dict,u'面积',(56,67,88,110))
+    data_dict=regu_by_name(data_dict,u'居室数',(1,2,3,4))
+    data_dict=regu_by_name(data_dict,u'建筑年代',(1997,2001,2004,2007))
+    data_dict=regu_by_name(data_dict,u'总层数',(6,7,15,20))
+    data_dict=regu_by_name(data_dict,u'楼层',(u'高楼层',u'低楼层',u'低楼层',u'无数据'))
+    name=u'装修'
+    for index,data in enumerate(data_dict[name]):
+        if data==u'精装':
+            data_dict[name][index]=1
+        elif data==u'无':
+            data_dict[name][index]=2
+        else:
+            data_dict[name][index]=0
     # data_dict['data_num']=1000
-    for key in keys:
-        data_dict[key]=np.random.random_integers(0,4,data_dict['data_num'])
+    # for key in keys:
+    #     data_dict[key]=np.random.random_integers(0,4,data_dict['data_num'])
 
     return keys,data_dict

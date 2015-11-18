@@ -18,22 +18,21 @@ def crossover(pop, pc):
 
     for i in range(0,popsize,2):
         ra=np.random.rand()
-        if ra>pc:
-            continue
-        se_col=np.random.permutation(range(chrome_col_length))[:2]
-        se_rows=np.random.permutation(range(chrome_col_length,chromelength))[:2]
-        se_col=np.sort(se_col)
-        se_rows=np.sort(se_rows)
+        if ra<pc:
+            se_col=np.random.permutation(range(chrome_col_length))[:2]
+            se_rows=np.random.permutation(range(chrome_col_length,chromelength))[:2]
+            se_col=np.sort(se_col)
+            se_rows=np.sort(se_rows)
 
-        newpop[i,se_col[0]:se_col[1]]=pop[i+1,se_col[0]:se_col[1]]
-        newpop[i+1,se_col[0]:se_col[1]]=pop[i,se_col[0]:se_col[1]]
+            newpop[i,se_col[0]:se_col[1]]=pop[i+1,se_col[0]:se_col[1]]
+            newpop[i+1,se_col[0]:se_col[1]]=pop[i,se_col[0]:se_col[1]]
 
-        newpop[i,se_rows[0]:se_rows[1]]=pop[i+1,se_rows[0]:se_rows[1]]
-        newpop[i+1,se_rows[0]:se_rows[1]]=pop[i,se_rows[0]:se_rows[1]]
+            newpop[i,se_rows[0]:se_rows[1]]=pop[i+1,se_rows[0]:se_rows[1]]
+            newpop[i+1,se_rows[0]:se_rows[1]]=pop[i,se_rows[0]:se_rows[1]]
 
         #ensure num of chosen_col be constant
         for j in [i,i+1]:
-            num=len([npop for npop in newpop[j,:chrome_col_length] if npop==1])
+            num=sum(newpop[j,:chrome_col_length])
             if num > chrome_chosen_col_length:
                 ones=[index for index,npop in enumerate(newpop[j,:chrome_col_length]) if npop==1]
                 tozeros=np.random.permutation(ones)[:num-chrome_chosen_col_length]
@@ -90,8 +89,10 @@ def selection(pop, fvalue):
 def objective(pop, keys, collection):
     subsets=get_subsets_by_pops(pop, keys, collection)
     objvalues=[]
-    min_length=20
+    min_length=200
 
+    max_objvalue=-1
+    best_data={}
     for subset in subsets:
         if len(subset['jjzq'])<min_length or len(subset['jzzq'])<min_length:
             objvalue=0
@@ -107,9 +108,22 @@ def objective(pop, keys, collection):
             stdjzj=np.std(subset['jzj'])
 
             objvalue=abs(meanjjzq-meanjzzq)/(stdjjzq+stdjzzq)+abs(meanjjj-meanjzj)/(stdjjj+stdjzj)
+            if objvalue>max_objvalue:
+                max_objvalue=objvalue
+                best_data['简装房数目']=len(subset['jjj'])
+                best_data['精装房数目']=len(subset['jzj'])
+                best_data['简装周期均值']=meanjjzq
+                best_data['精装周期均值']=meanjzzq
+                best_data['简装周期方差']=stdjjzq
+                best_data['精装周期方差']=stdjzzq
+
+                best_data['简装价均值']=meanjjj
+                best_data['精装价均值']=meanjzj
+                best_data['简装价方差']=stdjjj
+                best_data['精装价方差']=stdjzj
         objvalues.append(objvalue)
 
-    return np.array(objvalues)
+    return np.array(objvalues),best_data
 
 def fitvalue(objvalue):
     fvalue=objvalue
@@ -136,8 +150,8 @@ def genetic():
         pm = float(sys.argv[3])
         maxIter = int(sys.argv[4])
     else:
-        print 'python genetic.py popsize chromlength crossover_prob mutation_prob max_iteration'
-        return
+        print 'python genetic.py popsize crossover_prob mutation_prob max_iteration'
+        return 0,0
 
     chromlength=len(keys)+chrome_chosen_col_length*chrome_row_length
     pop = np.round(np.random.rand(popsize, chromlength))
@@ -145,11 +159,11 @@ def genetic():
     x = np.zeros((maxIter, 1))
     y = np.zeros((maxIter, chromlength))
 
-    bestfit=0
+    bestfit=-1
     bestindividual=[]
 
     for iter in range(maxIter):
-        objvalue = objective(pop, keys, collection) # popsize * chromlength vector
+        objvalue,best_data = objective(pop, keys, collection) # popsize * chromlength vector
         fvalue=fitvalue(objvalue) # calculate fit values
 
         newpop = selection(pop, fvalue) # selection procedure
@@ -165,6 +179,11 @@ def genetic():
             bestindividual = pop[index, :]
 
         print iter,bestfit
+        print bestindividual
+
+        best_data_keys=[u'简装房数目',u'精装房数目',u'简装价均值',u'精装价均值',u'简装价方差',u'精装价方差',u'简装周期均值',u'精装周期均值',u'简装周期方差',u'精装周期方差']
+        for key in best_data_keys:
+            print key,best_data[key.encode('utf-8')]
 
         x[iter] = bestfit
         y[iter] = bestindividual
@@ -194,7 +213,7 @@ def get_subsets_by_pops(pop, keys, collection):
                 if key_index>=chrome_chosen_col_length:
                     break
                 field=collection[key][index]
-                if pop_values[key_index*chrome_row_length+field]==0:
+                if field == 5 or pop_values[key_index*chrome_row_length+field]==0:
                     ok=False
                     break
             if ok:
@@ -202,7 +221,7 @@ def get_subsets_by_pops(pop, keys, collection):
                     # 简装
                     subset[pop_index]['jjzq'].append(collection[u'成交周期'][index])
                     subset[pop_index]['jjj'].append(collection[u'成交价'][index])
-                else:
+                elif collection[u'装修'][index]==1:
                     # 精装
                     subset[pop_index]['jzzq'].append(collection[u'成交周期'][index])
                     subset[pop_index]['jzj'].append(collection[u'成交价'][index])
