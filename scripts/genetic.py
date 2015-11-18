@@ -181,10 +181,10 @@ def genetic():
         print iter,bestfit
         print bestindividual
 
-        best_data_keys=[u'简装房数目',u'精装房数目',u'简装价均值',u'精装价均值',u'简装价方差',u'精装价方差',u'简装周期均值',u'精装周期均值',u'简装周期方差',u'精装周期方差']
+        best_data_keys=['简装房数目','精装房数目','简装价均值','精装价均值','简装价方差','精装价方差','简装周期均值','精装周期均值','简装周期方差','精装周期方差']
         for key in best_data_keys:
-            print key,best_data[key.encode('utf-8')]
-
+            print key,best_data[key]
+        sys.stdout.flush()
         x[iter] = bestfit
         y[iter] = bestindividual
 
