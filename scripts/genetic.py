@@ -165,11 +165,7 @@ def genetic():
     for iter in range(maxIter):
         objvalue,best_data = objective(pop, keys, collection) # popsize * chromlength vector
         fvalue=fitvalue(objvalue) # calculate fit values
-
-        newpop = selection(pop, fvalue) # selection procedure
-        newpop = crossover(newpop, pc) # cross-over procedure
-        newpop = mutation(newpop, pm) # mutation procedure
-
+        #if not better than prev generation
         if bestfit>np.amax(fvalue):
             negest=np.argmin(fvalue)
             pop[negest,:]=bestindividual
@@ -177,14 +173,23 @@ def genetic():
             bestfit=np.amax(fvalue)
             index=np.argmax(fvalue)
             bestindividual = pop[index, :]
+            #print n iteration before
+#            print iter,bestfit
+#            for m_in in range(len(keys)):
+#                if bestindividual[m_in]==1:
+#                    print keys[m_in]
+            print bestfit
+            print iter,bestindividual
+            best_data_keys=['简装房数目','精装房数目','简装价均值','精装价均值','简装价方差','精装价方差','简装周期均值','精装周期均值','简装周期方差','精装周期方差']
+            for key in best_data_keys:
+                print key,best_data[key]
+            sys.stdout.flush()
+            
+        
+        newpop = selection(pop, fvalue) # selection procedure
+        newpop = crossover(newpop, pc) # cross-over procedure
+        newpop = mutation(newpop, pm) # mutation procedure
 
-        print iter,bestfit
-        print bestindividual
-
-        best_data_keys=['简装房数目','精装房数目','简装价均值','精装价均值','简装价方差','精装价方差','简装周期均值','精装周期均值','简装周期方差','精装周期方差']
-        for key in best_data_keys:
-            print key,best_data[key]
-        sys.stdout.flush()
         x[iter] = bestfit
         y[iter] = bestindividual
 
