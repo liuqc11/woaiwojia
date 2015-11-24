@@ -77,7 +77,7 @@ def regu_by_name(data_dict,name,regu_li):
 
 def regu_table(data_dict):
     # keys=[u'均价',u'装修',u'朝向',u'板块',u'挂牌价',u'面积',u'总层数',u'居室数',u'区域',u'楼层',u'小区',u'建筑年代',u'楼型']
-    keys=[u'面积',u'总层数',u'居室数',u'楼层',u'建筑年代',u'楼型',u'朝向']
+    keys=[u'面积',u'总层数',u'居室数',u'楼层',u'建筑年代',u'楼型',u'朝向',u'板块均价']
     # keys=data_dict.keys()# might be part of the keys
     # select cols and regu table
 
@@ -91,6 +91,8 @@ def regu_table(data_dict):
     data_dict=regu_by_name(data_dict,u'总层数',(6,7,15,20))
     data_dict=regu_by_name(data_dict,u'楼层',(u'高楼层',u'低楼层',u'低楼层',u'无数据'))
     data_dict=regu_by_name(data_dict,u'楼型',(u'塔楼',u'板楼',u'板塔结合',u'别墅'))
+    data_dict=regu_by_name(data_dict,u'板块均价',(22685,29973,38772,49739))
+    #kmeans聚类结果
 
     name=u'装修'
     for index,data in enumerate(data_dict[name]):
