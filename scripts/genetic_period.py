@@ -110,8 +110,8 @@ def objective(pop, keys, collection):
             objvalue=abs(meanjjzq-meanjzzq)/(stdjjzq+stdjzzq)
             if objvalue>max_objvalue:
                 max_objvalue=objvalue
-                best_data['简装房数目']=len(subset['jjj'])
-                best_data['精装房数目']=len(subset['jzj'])
+                best_data['简装房数目']=len(subset['jjzq'])
+                best_data['精装房数目']=len(subset['jzzq'])
                 best_data['简装周期均值']=meanjjzq
                 best_data['精装周期均值']=meanjzzq
                 best_data['简装周期方差']=stdjjzq
