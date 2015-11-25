@@ -85,11 +85,11 @@ def regu_table(data_dict):
         with open(data_dir,'wb') as f:
             pickle.dump(data_dict,f)
 
-    data_dict=regu_by_name(data_dict,u'面积',(56,67,88,110))
+    data_dict=regu_by_name(data_dict,u'面积',(76,114,144,250))
     data_dict=regu_by_name(data_dict,u'居室数',(1,2,3,4))
     data_dict=regu_by_name(data_dict,u'建筑年代',(1997,2001,2004,2007))
     data_dict=regu_by_name(data_dict,u'总层数',(6,7,15,20))
-    data_dict=regu_by_name(data_dict,u'楼层',(u'高楼层',u'低楼层',u'低楼层',u'无数据'))
+    data_dict=regu_by_name(data_dict,u'楼层',(u'高楼层',u'低楼层',u'中楼层',u'无数据'))
     data_dict=regu_by_name(data_dict,u'楼型',(u'塔楼',u'板楼',u'板塔结合',u'别墅'))
     data_dict=regu_by_name(data_dict,u'板块均价',(22685,29973,38772,49739))
     #kmeans聚类结果
