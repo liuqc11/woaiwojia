@@ -150,7 +150,7 @@ def genetic():
         pm = float(sys.argv[3])
         maxIter = int(sys.argv[4])
     else:
-        print 'python genetic_price.py popsize crossover_prob mutation_prob max_iteration'
+        print 'python genetic_period.py popsize crossover_prob mutation_prob max_iteration'
         return 0,0
 
     chromlength=len(keys)+chrome_chosen_col_length*chrome_row_length
